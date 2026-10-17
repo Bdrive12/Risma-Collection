@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risma Collection</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#fbf8ee', 100: '#f5efd4', 200: '#ebdca8', 300: '#c9a64a', 400: '#a77d20',
+                            500: '#946d1e', 600: '#7a581c', 700: '#7a581c', 800: '#64471c', 900: '#543c1a',
+                        },
+                        dark: {
+                            900: '#f8f6f0', 800: '#ffffff', 700: '#f2eee4', 600: '#e7e0d1',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- LINK KE FILE CSS TERPISAH -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-dark-900 text-gray-100 antialiased min-h-screen flex flex-col justify-between selection:bg-gold-400 selection:text-black">
+    <!-- HEADER / NAVBAR -->
+    <header class="sticky top-0 z-50 bg-dark-900/90 backdrop-blur-md border-b border-gold-500/20">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-20 py-2 sm:py-0 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
+            <a href="#" onclick="switchView('catalog')" class="min-w-0 flex items-center gap-2 sm:gap-3 group">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full border border-gold-400 flex items-center justify-center overflow-hidden text-gold-400 group-hover:bg-gold-400 group-hover:text-black transition duration-300">
+                    <img id="brandLogo" alt="Logo toko" class="hidden w-full h-full object-cover">
+                    <i id="brandLogoFallback" class="fa-solid fa-crown text-sm"></i>
+                </div>
+                <div>
+                    <span class="block font-serif text-base sm:text-2xl font-bold tracking-widest text-gold-400 whitespace-nowrap">Risma Collection</span>
+                    <span class="hidden min-[360px]:block text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-gray-400">Kebaya & Gaun Penganten</span>
+                </div>
+            </a>
+
+            <div class="shrink-0 flex items-center gap-2 sm:gap-3">
+                <button type="button" aria-label="Lacak Pesanan" title="Lacak Pesanan" onclick="openStatusModal()" class="h-11 w-11 sm:w-auto shrink-0 text-xs sm:text-sm font-medium sm:px-4 sm:py-2 rounded-full border border-gold-400/40 text-gold-300 hover:bg-gold-400 hover:text-black transition duration-300 flex items-center justify-center sm:justify-start gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span class="hidden sm:inline">Lacak Pesanan</span>
+                </button>
+                <button id="adminToggleBtn" type="button" aria-label="Mode Admin" title="Mode Admin" onclick="toggleAdminMode()" class="h-11 w-11 sm:w-auto shrink-0 text-xs sm:text-sm font-medium sm:px-4 sm:py-2 rounded-full bg-dark-700 text-gold-400 hover:bg-gold-400 hover:text-black transition duration-300 border border-gold-500/30 flex items-center justify-center sm:justify-start gap-2">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span id="adminToggleText" class="hidden sm:inline">Mode Admin</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="flex-grow">
+        <!-- VIEW 1: KATALOG PRODUK (DEFAULT) -->
+        <section id="catalogView" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-gold-400 text-xs uppercase tracking-[0.4em] font-semibold">Koleksi Eksklusif 2026</span>
+                <h1 class="font-serif text-4xl sm:text-5xl font-bold mt-3 mb-4 text-white">Keanggunan dalam Setiap Jahitan</h1>
+                <p class="text-gray-400 text-sm sm:text-base">Pilih busana impian Anda. Layanan pengukuran langsung di tempat (Onsite Measurement) tersedia untuk hasil pas yang sempurna.</p>
+                <div class="w-16 h-[1px] bg-gold-400 mx-auto mt-6"></div>
+            </div>
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Data produk via JS -->
+            </div>
+        </section>
+        <!-- VIEW 2: DASHBOARD ADMIN -->
+        <section id="adminView" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 pb-4 border-b border-gray-800 gap-4">
+                <div>
+                    <h2 class="font-serif text-3xl font-bold text-white">Panel Kontrol Admin</h2>
+                    <p class="text-gray-400 text-sm mt-1">Kelola pesanan masuk, entri data manual, verifikasi pembayaran, & update progress.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="openAdminAddModal()" class="bg-gold-400 hover:bg-gold-300 text-black text-xs font-semibold px-4 py-2.5 rounded-xl transition flex items-center space-x-2 shadow-md">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Entri Pesanan Baru</span>
+                    </button>
+                    <span class="px-3 py-1 bg-gold-400/10 border border-gold-400/30 text-gold-400 rounded-full text-xs font-semibold" id="totalOrderBadge">Total: 0</span>
+                    <button onclick="resetData()" class="text-xs text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1.5 rounded-lg transition">Reset</button>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-6 border-b border-gray-800 pb-3">
+                <button id="adminOrdersTab" type="button" onclick="switchAdminTab('orders')" class="bg-gold-400 text-black text-sm font-semibold px-4 py-2 rounded-lg transition">Pesanan</button>
+                <button id="adminCatalogTab" type="button" onclick="switchAdminTab('catalog')" class="bg-dark-700 text-gray-300 text-sm font-semibold px-4 py-2 rounded-lg border border-gray-700 transition">Katalog</button>
+                <button id="adminSettingsTab" type="button" onclick="switchAdminTab('settings')" class="bg-dark-700 text-gray-300 text-sm font-semibold px-4 py-2 rounded-lg border border-gray-700 transition">Pengaturan</button>
+                <button id="adminHrTab" type="button" onclick="switchAdminTab('hr')" class="bg-dark-700 text-gray-300 text-sm font-semibold px-4 py-2 rounded-lg border border-gray-700 transition">SDM & Intern</button>
+            </div>
+            <div id="ordersManagementPanel" class="bg-dark-800 border border-gray-800 rounded-2xl overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-dark-700/50 border-b border-gray-800 text-xs font-semibold uppercase tracking-wider text-gold-400">
+                                <th class="py-4 px-6">No. Pesanan</th>
+                                <th class="py-4 px-6">Pelanggan</th>
+                                <th class="py-4 px-6">Produk</th>
+                                <th class="py-4 px-6">Detail Ukuran & Alamat</th>
+                                <th class="py-4 px-6">Status Pembayaran</th>
+                                <th class="py-4 px-6">Progress Pengerjaan</th>
+                                <th class="py-4 px-6 text-center">Tindakan Admin</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminOrderTableBody" class="divide-y divide-gray-800 text-sm">
+                            <!-- Tabel data admin via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="adminEmptyState" class="hidden py-16 text-center text-gray-500">
+                    <i class="fa-solid fa-folder-open text-4xl mb-3 text-gray-600"></i>
+                    <p>Belum ada pesanan masuk saat ini.</p>
+                </div>
+            </div>
+            <section id="hrManagementPanel" class="hidden space-y-6">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 items-start">
+                    <div class="bg-dark-800 border border-gray-800 rounded-xl p-5 sm:p-6">
+                        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="font-serif text-2xl font-bold text-white">Data Pegawai & Intern</h3>
+                                <p class="text-xs text-gray-400 mt-1">Identitas pegawai, detail masa magang, dan evaluasi.</p>
+                            </div>
+                            <span id="internCountBadge" class="px-3 py-1 bg-gold-400/10 border border-gold-400/30 text-gold-400 rounded-full text-xs font-semibold">0 Data</span>
+                        </div>
+                        <form id="internForm" onsubmit="saveIntern(event)" class="space-y-4">
+                            <input type="hidden" id="internRecordId">
+                            <label class="flex items-center gap-2 text-sm text-gray-300"><input id="internIsIntern" type="checkbox" checked onchange="toggleInternDetails()" class="h-4 w-4 accent-gold-500"> Pegawai ini intern</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="internName" class="block text-xs font-medium text-gray-300 mb-1">Nama lengkap *</label>
+                                    <input id="internName" required maxlength="100" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400" placeholder="Nama sesuai identitas">
+                                </div>
+                                <div>
+                                    <label for="internPhone" class="block text-xs font-medium text-gray-300 mb-1">Nomor telepon *</label>
+                                    <input id="internPhone" type="tel" required maxlength="30" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400" placeholder="08xxxxxxxxxx">
+                                </div>
+                                <div>
+                                    <label for="internEmail" class="block text-xs font-medium text-gray-300 mb-1">Email</label>
+                                    <input id="internEmail" type="email" maxlength="120" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400" placeholder="nama@email.com">
+                                </div>
+                                <div id="internInstitutionField">
+                                    <label for="internInstitution" class="block text-xs font-medium text-gray-300 mb-1">Sekolah / universitas</label>
+                                    <input id="internInstitution" maxlength="120" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400" placeholder="Nama institusi">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label for="internAddress" class="block text-xs font-medium text-gray-300 mb-1">Alamat lengkap *</label>
+                                    <textarea id="internAddress" required maxlength="500" rows="2" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400" placeholder="Jalan, nomor, kelurahan, kota"></textarea>
+                                </div>
+                                <div id="internSupervisorField">
+                                    <label for="internSupervisor" class="block text-xs font-medium text-gray-300 mb-1">Pembimbing</label>
+                                    <input id="internSupervisor" maxlength="100" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400" placeholder="Nama pembimbing">
+                                </div>
+                                <div id="internDepartmentField">
+                                    <label for="internDepartment" class="block text-xs font-medium text-gray-300 mb-1">Divisi / jurusan</label>
+                                    <input id="internDepartment" maxlength="100" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400" placeholder="Contoh: Operasional">
+                                </div>
+                                <div id="internStartDateField">
+                                    <label for="internStartDate" class="block text-xs font-medium text-gray-300 mb-1">Tanggal mulai</label>
+                                    <input id="internStartDate" type="date" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400">
+                                </div>
+                                <div id="internEndDateField">
+                                    <label for="internEndDate" class="block text-xs font-medium text-gray-300 mb-1">Tanggal selesai</label>
+                                    <input id="internEndDate" type="date" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400">
+                                </div>
+                            </div>
+                            <div id="internEvaluationPanel" class="border-t border-gray-700 pt-4">
+                                <div class="mb-3">
+                                    <h4 class="text-sm font-semibold text-gold-300">Indikator penilaian</h4>
+                                    <p class="text-[11px] text-gray-400 mt-1">Beri nilai 1 (perlu bimbingan) sampai 5 (sangat baik). Nilai rata-rata dihitung otomatis.</p>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    <label class="text-xs text-gray-300">Kedisiplinan<select id="scoreDiscipline" class="intern-score mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"><option value="3">3 - Baik</option><option value="1">1 - Perlu bimbingan</option><option value="2">2 - Cukup</option><option value="4">4 - Sangat baik</option><option value="5">5 - Unggul</option></select></label>
+                                    <label class="text-xs text-gray-300">Kualitas tugas<select id="scoreQuality" class="intern-score mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"><option value="3">3 - Baik</option><option value="1">1 - Perlu bimbingan</option><option value="2">2 - Cukup</option><option value="4">4 - Sangat baik</option><option value="5">5 - Unggul</option></select></label>
+                                    <label class="text-xs text-gray-300">Komunikasi<select id="scoreCommunication" class="intern-score mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"><option value="3">3 - Baik</option><option value="1">1 - Perlu bimbingan</option><option value="2">2 - Cukup</option><option value="4">4 - Sangat baik</option><option value="5">5 - Unggul</option></select></label>
+                                    <label class="text-xs text-gray-300">Kerja sama<select id="scoreTeamwork" class="intern-score mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"><option value="3">3 - Baik</option><option value="1">1 - Perlu bimbingan</option><option value="2">2 - Cukup</option><option value="4">4 - Sangat baik</option><option value="5">5 - Unggul</option></select></label>
+                                    <label class="text-xs text-gray-300">Inisiatif<select id="scoreInitiative" class="intern-score mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"><option value="3">3 - Baik</option><option value="1">1 - Perlu bimbingan</option><option value="2">2 - Cukup</option><option value="4">4 - Sangat baik</option><option value="5">5 - Unggul</option></select></label>
+                                    <label class="text-xs text-gray-300">Kemauan belajar<select id="scoreLearning" class="intern-score mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"><option value="3">3 - Baik</option><option value="1">1 - Perlu bimbingan</option><option value="2">2 - Cukup</option><option value="4">4 - Sangat baik</option><option value="5">5 - Unggul</option></select></label>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-2 pt-1">
+                                <button id="internSubmitButton" type="submit" class="bg-gold-400 hover:bg-gold-300 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition"><i class="fa-solid fa-user-plus mr-2"></i>Simpan Data Intern</button>
+                                <button id="cancelInternEditButton" type="button" onclick="resetInternForm()" class="hidden border border-gray-600 text-gray-300 hover:text-white text-sm px-4 py-2.5 rounded-lg transition">Batal edit</button>
+                            </div>
+                        </form>
+                    </div>
+                <div class="bg-dark-800 border border-gray-800 rounded-xl overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-800">
+                        <h3 class="font-serif text-xl font-bold text-white">Daftar Pegawai & Intern</h3>
+                    </div>
+                    <div id="internList" class="divide-y divide-gray-800"></div>
+                    <div id="internEmptyState" class="hidden py-10 text-center text-sm text-gray-500">Belum ada data intern. Tambahkan melalui formulir di atas.</div>
+                </div>
+                </div>
+            </section>
+            <section id="catalogManagementPanel" class="hidden space-y-6">
+                <div class="bg-dark-800 border border-gray-800 rounded-xl p-5 sm:p-6">
+                    <div class="mb-5">
+                        <h3 id="productEditorTitle" class="font-serif text-2xl font-bold text-white">Tambah Produk Katalog</h3>
+                        <p class="text-xs text-gray-400 mt-1">Harga ditentukan setelah konsultasi untuk setiap pesanan custom.</p>
+                    </div>
+                    <form id="productForm" onsubmit="saveProduct(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="hidden" id="productRecordId">
+                        <label class="block text-xs font-medium text-gray-300">Nama produk *<input id="productName" required maxlength="100" class="mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white" placeholder="Nama busana"></label>
+                        <label class="block text-xs font-medium text-gray-300">Kategori *<input id="productCategory" required maxlength="60" class="mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white" placeholder="Gaun malam"></label>
+                        <label class="block text-xs font-medium text-gray-300 sm:col-span-2">Deskripsi *<textarea id="productDescription" required maxlength="300" rows="2" class="mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white" placeholder="Deskripsi singkat produk"></textarea></label>
+                        <label class="block text-xs font-medium text-gray-300 sm:col-span-2">Foto produk (maks. 1,5 MB) *<input id="productImage" type="file" accept="image/jpeg,image/png,image/webp" required class="mt-1 w-full text-xs text-gray-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gold-400 file:text-black hover:file:bg-gold-300 bg-dark-900 border border-gray-700 rounded-lg"></label>
+                        <div class="sm:col-span-2 flex flex-wrap gap-2">
+                            <button id="productSubmitButton" type="submit" class="bg-gold-400 hover:bg-gold-300 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition">Simpan Produk</button>
+                            <button id="cancelProductEditButton" type="button" onclick="resetProductForm()" class="hidden border border-gray-600 text-gray-300 text-sm px-4 py-2.5 rounded-lg">Batal edit</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="catalogAdminList" class="bg-dark-800 border border-gray-800 rounded-xl divide-y divide-gray-800"></div>
+            </section>
+            <section id="settingsManagementPanel" class="hidden space-y-6">
+                <form id="storeSettingsForm" onsubmit="saveStoreSettings(event)" class="bg-dark-800 border border-gray-800 rounded-xl p-5 sm:p-6 space-y-4">
+                    <div>
+                        <h3 class="font-serif text-2xl font-bold text-white">Kontak WhatsApp Admin</h3>
+                        <p class="text-xs text-gray-400 mt-1">Nomor ini ditampilkan sebagai kontak bantuan di pembayaran QRIS.</p>
+                    </div>
+                    <label class="block text-xs font-medium text-gray-300">Nomor WhatsApp admin *<input id="adminWhatsAppInput" type="tel" required maxlength="30" class="mt-1 w-full sm:max-w-md bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white" placeholder="08xxxxxxxxxx"></label>
+                    <button type="submit" class="bg-gold-400 hover:bg-gold-300 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition">Simpan Nomor</button>
+                </form>
+                <form id="adminPasswordForm" onsubmit="changeAdminPassword(event)" class="bg-dark-800 border border-gray-800 rounded-xl p-5 sm:p-6 space-y-4">
+                    <div>
+                        <h3 class="font-serif text-2xl font-bold text-white">Ubah Kata Sandi Admin</h3>
+                        <p class="text-xs text-gray-400 mt-1">Gunakan kata sandi minimal 8 karakter.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <label class="block text-xs font-medium text-gray-300">Kata sandi saat ini<input id="currentAdminPassword" type="password" required autocomplete="current-password" class="mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white"></label>
+                        <label class="block text-xs font-medium text-gray-300">Kata sandi baru<input id="newAdminPassword" type="password" required minlength="8" autocomplete="new-password" class="mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white"></label>
+                        <label class="block text-xs font-medium text-gray-300">Ulangi kata sandi baru<input id="confirmAdminPassword" type="password" required minlength="8" autocomplete="new-password" class="mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white"></label>
+                    </div>
+                    <button type="submit" class="bg-gold-400 hover:bg-gold-300 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition">Ubah Kata Sandi</button>
+                </form>
+                <section class="bg-dark-800 border border-gray-800 rounded-xl p-5 sm:p-6">
+                    <h3 class="text-sm font-semibold text-white">Logo toko</h3>
+                    <p class="text-xs text-gray-400 mt-1 mb-4">Logo disimpan di browser ini.</p>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-full border border-gold-400/60 bg-dark-900 overflow-hidden flex items-center justify-center text-gold-400">
+                            <img id="logoPreview" alt="Pratinjau logo" class="hidden w-full h-full object-cover">
+                            <i id="logoPreviewFallback" class="fa-solid fa-crown"></i>
+                        </div>
+                        <span class="text-[11px] text-gray-400">Pratinjau logo</span>
+                    </div>
+                    <label for="logoFileInput" class="block text-xs font-medium text-gray-300 mb-1">Ganti logo</label>
+                    <input id="logoFileInput" type="file" accept="image/*" onchange="handleLogoUpload(event)" class="w-full sm:max-w-md text-xs text-gray-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gold-400 file:text-black hover:file:bg-gold-300 bg-dark-900 border border-gray-700 rounded-lg">
+                    <button type="button" onclick="removeBrandLogo()" class="mt-3 text-xs text-gray-300 border border-gray-700 hover:border-red-400 hover:text-red-300 px-3 py-2 rounded-lg transition">Kembalikan logo bawaan</button>
+                    <p id="logoMessage" aria-live="polite" class="text-[11px] text-gray-400 mt-3"></p>
+                </section>
+            </section>
+        </section>
+    </main>
+    <!-- FOOTER -->
+    <footer class="bg-dark-800 border-t border-gray-800 py-8 mt-20">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-xs">
+            <p class="font-serif tracking-widest text-gold-400/80 mb-2 text-sm">AURA COUTURE ATELIER</p>
+            <p>&copy; 2026 All Rights Reserved. Layanan Konsultasi & Pengukuran Eksklusif.</p>
+        </div>
+    </footer>
+    <!-- MODAL FORM PEMESANAN KONSUMEN -->
+    <div id="orderModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-dark-800 border border-gold-500/30 rounded-2xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl my-8">
+            <button onclick="closeOrderModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gold-400 transition text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div class="mb-6">
+                <span class="text-gold-400 text-xs uppercase tracking-widest font-semibold">Formulir Pesanan & Pengukuran</span>
+                <h3 id="modalProductName" class="font-serif text-2xl font-bold text-white mt-1">Nama Produk</h3>
+            </div>
+            <form id="orderForm" onsubmit="handleOrderSubmit(event)" class="space-y-4">
+                <input type="hidden" id="inputProductId">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Nama Lengkap *</label>
+                        <input type="text" id="custName" required placeholder="cth. Rania Putri" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Nomor WhatsApp *</label>
+                        <input type="tel" id="custPhone" required placeholder="cth. 081234567890" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                </div>
+                <label class="flex items-center gap-2 text-sm text-gray-300"><input id="onsiteMeasurement" type="checkbox" class="h-4 w-4 accent-gold-500"> Pengukuran dilakukan di tempat</label>
+                <div>
+                    <label id="custAddressLabel" for="custAddress" class="block text-xs font-medium text-gray-300 mb-1">Alamat Lengkap</label>
+                    <textarea id="custAddress" rows="2" placeholder="Jalan, Nomor Rumah, Patokan, Kota..." class="w-full bg-dark-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400"></textarea>
+                </div>
+                <div class="bg-gold-500/5 border border-gold-500/20 rounded-xl p-4">
+                    <p class="text-xs text-gold-300 font-medium mb-3 flex items-center space-x-2">
+                        <i class="fa-solid fa-ruler-combined"></i>
+                        <span>Data Ukuran Badan (Bisa diisi perkiraan / diukur tim di tempat)</span>
+                    </p>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] text-gray-400 mb-1">Lingkar Dada (cm)</label>
+                            <input type="number" id="sizeChest" placeholder="90" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold-400">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-400 mb-1">Lingkar Pinggang</label>
+                            <input type="number" id="sizeWaist" placeholder="70" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold-400">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-400 mb-1">Tinggi Badan</label>
+                            <input type="number" id="sizeHeight" placeholder="165" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold-400">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Catatan Jadwal Kunjungan Tim Pengukur</label>
+                    <input type="text" id="custSchedule" placeholder="cth. Hari Sabtu, pukul 14.00 WIB" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-black font-semibold py-3 rounded-xl hover:from-gold-400 hover:to-gold-300 transition text-sm shadow-lg shadow-gold-500/20">
+                    Buat Pesanan & Lanjut ke Pembayaran
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- MODAL ADMIN: ENTRI PESANAN BARU -->
+    <div id="adminAddModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-dark-800 border border-gold-500/30 rounded-2xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl my-8">
+            <button onclick="closeAdminAddModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gold-400 transition text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div class="mb-6">
+                <span class="text-gold-400 text-xs uppercase tracking-widest font-semibold">Panel Admin</span>
+                <h3 class="font-serif text-2xl font-bold text-white mt-1">Entri Data Pesanan Baru</h3>
+                <p class="text-xs text-gray-400 mt-1">Buat pesanan langsung atas nama pelanggan dari katalog.</p>
+            </div>
+            <form id="adminAddForm" onsubmit="handleAdminAddSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Pilih Produk Katalog *</label>
+                    <select id="adminProductSelect" required class="w-full bg-dark-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Nama Pelanggan *</label>
+                        <input type="text" id="adminCustName" required placeholder="Nama Pelanggan" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Nomor WhatsApp *</label>
+                        <input type="tel" id="adminCustPhone" required placeholder="08123456789" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                </div>
+                <label class="flex items-center gap-2 text-sm text-gray-300"><input id="adminOnsiteMeasurement" type="checkbox" class="h-4 w-4 accent-gold-500"> Pengukuran dilakukan di tempat</label>
+                <div>
+                    <label id="adminCustAddressLabel" for="adminCustAddress" class="block text-xs font-medium text-gray-300 mb-1">Alamat Lengkap</label>
+                    <textarea id="adminCustAddress" rows="2" placeholder="Alamat lengkap..." class="w-full bg-dark-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400"></textarea>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[11px] text-gray-400 mb-1">Lingkar Dada (cm)</label>
+                        <input type="number" id="adminSizeChest" placeholder="90" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-gray-400 mb-1">Lingkar Pinggang</label>
+                        <input type="number" id="adminSizeWaist" placeholder="70" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-gray-400 mb-1">Tinggi Badan</label>
+                        <input type="number" id="adminSizeHeight" placeholder="165" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Status Awal Progress Pesanan</label>
+                    <select id="adminInitialStatus" class="w-full bg-dark-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400">
+                        <option value="Sedang Diproses">Sedang Diproses (Pengukuran)</option>
+                        <option value="Sedang Perancangan">Sedang Perancangan</option>
+                        <option value="Selesai">Selesai</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-gold-400 hover:bg-gold-300 text-black font-semibold py-3 rounded-xl transition text-sm">
+                    Simpan Pesanan Baru
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- MODAL LACAK PESANAN (DENGAN PROGRESS DETAIL) -->
+    <div id="statusModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-dark-800 border border-gold-500/30 rounded-2xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl my-8">
+            <button onclick="closeStatusModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gold-400 transition text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div class="mb-6 text-center">
+                <span class="text-gold-400 text-xs uppercase tracking-widest font-semibold">Sistem Pelacakan Konsumen</span>
+                <h3 class="font-serif text-2xl font-bold text-white mt-1">Cek Status Pesanan Anda</h3>
+                <p class="text-gray-400 text-xs mt-1">Masukkan Nomor Pesanan unik (tanpa login) untuk melihat progress dan melakukan pembayaran.</p>
+            </div>
+            <div class="flex space-x-2 mb-6">
+                <input type="text" id="searchOrderNoInput" placeholder="cth. AC-98421" class="flex-grow bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400 uppercase tracking-widest font-mono">
+                <button onclick="searchOrderStatus()" class="bg-gold-400 hover:bg-gold-300 text-black px-5 py-2.5 rounded-xl font-semibold text-sm transition">Cari</button>
+            </div>
+            <div id="statusResultContainer" class="hidden space-y-4 pt-4 border-t border-gray-700"></div>
+            <div id="statusNotFound" class="hidden py-8 text-center text-gray-400 text-sm">
+                <i class="fa-solid fa-circle-exclamation text-amber-400 text-2xl mb-2"></i>
+                <p>Nomor pesanan tidak ditemukan.</p>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL PEMBAYARAN QRIS & WAJIB UPLOAD BUKTI -->
+    <div id="paymentModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-dark-800 border border-gold-500/30 rounded-2xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl my-8 text-center">
+            <button onclick="closePaymentModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gold-400 transition text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <span class="text-gold-400 text-xs uppercase tracking-widest font-semibold">QRIS Pembayaran Resmi</span>
+            <h3 class="font-serif text-xl font-bold text-white mt-1">Selesaikan Pembayaran</h3>
+            <p id="payModalOrderNo" class="text-xs text-gray-400 font-mono mt-1">Order #AC-000</p>
+            <p id="payModalAmount" class="text-gold-300 font-bold text-lg mt-2">Rp 0</p>
+
+            <div class="bg-white p-4 rounded-2xl my-6 inline-block shadow-lg">
+                <div id="qrCode" class="min-h-48 min-w-48 flex items-center justify-center"></div>
+                <p class="text-[10px] text-black font-semibold mt-2 tracking-widest">RISMA COLLECTION</p>
+            </div>
+
+            <p class="text-xs text-gray-400 mb-4">Scan QRIS ini; nominal tagihan sudah tercantum otomatis. Setelah membayar, unggah bukti agar pesanan dapat diverifikasi.</p>
+            <a id="adminWhatsAppLink" target="_blank" rel="noopener" class="hidden mb-4 text-emerald-700 text-sm font-semibold"><i class="fa-brands fa-whatsapp mr-1"></i> Hubungi WhatsApp Admin</a>
+            <form id="uploadProofForm" onsubmit="handleUploadProof(event)" class="space-y-4 text-left">
+                <input type="hidden" id="uploadOrderNo">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Unggah Gambar Bukti Transfer *</label>
+                    <input type="file" id="proofFile" accept="image/*" required class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-gold-400 file:text-black hover:file:bg-gold-300 file:cursor-pointer bg-dark-900 border border-gray-700 rounded-xl">
+                </div>
+                <button type="submit" class="w-full bg-gold-400 hover:bg-gold-300 text-black font-semibold py-3 rounded-xl transition text-sm">
+                    Kirim Bukti Pembayaran Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+    <div id="adminAccessModal" class="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <form id="adminAccessForm" onsubmit="submitAdminAccess(event)" class="bg-dark-800 border border-gold-500/30 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+            <div>
+                <span class="text-gold-500 text-xs uppercase tracking-widest font-semibold">Area Terbatas</span>
+                <h2 id="adminAccessTitle" class="font-serif text-2xl font-bold text-white mt-1">Masuk Admin</h2>
+                <p id="adminAccessMessage" class="text-sm text-gray-400 mt-2"></p>
+            </div>
+            <label class="block text-xs font-medium text-gray-300">Kata sandi<input id="adminAccessPassword" type="password" required minlength="8" autocomplete="current-password" class="mt-1 w-full bg-dark-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white"></label>
+            <p id="adminAccessError" class="hidden text-xs text-red-600" role="alert"></p>
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeAdminAccessModal()" class="border border-gray-600 text-gray-600 px-4 py-2 rounded-lg text-sm">Batal</button>
+                <button id="adminAccessSubmit" type="submit" class="bg-gold-400 hover:bg-gold-300 text-black font-semibold px-4 py-2 rounded-lg text-sm">Masuk</button>
+            </div>
+        </form>
+    </div>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-32 opacity-0 transition-all duration-300 bg-dark-800 border border-gold-400 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3">
+        <div id="toastIcon" class="text-gold-400 text-lg"><i class="fa-solid fa-circle-check"></i></div>
+        <div>
+            <p id="toastTitle" class="text-xs font-bold text-gold-400">Berhasil</p>
+            <p id="toastMessage" class="text-xs text-gray-300">Pesan notifikasi...</p>
+        </div>
+    </div>
+
+    <!-- LINK KE FILE JAVASCRIPT TERPISAH -->
+    <script src="script.js"></script>
+</body>
+</html>
